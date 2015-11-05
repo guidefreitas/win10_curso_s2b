@@ -1,0 +1,41 @@
+﻿<Page
+    x:Class="GerenciadorColecoes.DetalheLivro"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GerenciadorColecoes"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    
+    <Page.TopAppBar>
+        <CommandBar IsSticky="True" x:Name="appBar" Background="{StaticResource BackgroundColor}">
+            <CommandBar.PrimaryCommands>
+                <AppBarToggleButton Foreground="{StaticResource ForegroundColor}" Name="btFavorito"  Icon="Favorite" IsCompact="False" Label="Favorito" Checked="btFavorito_Checked" Unchecked="btFavorito_Unchecked"/>
+                <AppBarButton Foreground="{StaticResource ForegroundColor}" Name="btEditar" Click="btEditar_Click" Icon="Edit" IsCompact="False" Label="Editar"/>
+                <AppBarButton Foreground="{StaticResource ForegroundColor}" Name="btRemover" Click="btRemover_Click" Icon="Delete" IsCompact="False" Label="Remover"/>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+
+    </Page.TopAppBar>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <ContentThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        
+        <Image Grid.Column="0" Stretch="Fill" Height="520" Width="380" Name="imagemCapa" Margin="20" ></Image>
+        <StackPanel Grid.Column="1" Margin="20">
+            <TextBlock Name="tbNome" Text="Titulo" Style="{StaticResource HeaderTextBlockStyle}" Margin="0,0,0,10"/>
+            <TextBlock Name="tbNomeCategoria" Text="Categoria" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10"/>
+            <TextBlock Name="tbDescricao" Text="Descricao" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,10" />
+        </StackPanel>
+    </Grid>
+</Page>

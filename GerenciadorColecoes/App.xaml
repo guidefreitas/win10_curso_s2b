@@ -1,0 +1,14 @@
+﻿<Application
+    x:Class="GerenciadorColecoes.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GerenciadorColecoes"
+    RequestedTheme="Light">
+    <Application.Resources>
+        <SolidColorBrush x:Key="BackgroundColor" Color="DarkBlue"></SolidColorBrush>
+        <SolidColorBrush x:Key="ForegroundColor" Color="White"></SolidColorBrush>
+        <SolidColorBrush x:Key="ListViewTransparentSelectedBackground" Color="Transparent" />
+        <SolidColorBrush x:Key="ListViewTransparentClickedBackground" Color="DarkBlue" />
+        <SolidColorBrush x:Key="ListViewTransparentClickedForeground" Color="White" />
+    </Application.Resources>
+</Application>

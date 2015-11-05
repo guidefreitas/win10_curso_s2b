@@ -1,0 +1,41 @@
+﻿<Page
+    x:Class="GerenciadorColecoes.Pesquisar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GerenciadorColecoes"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBox Name="tbPesquisa" PlaceholderText="Pesquisar" TextChanged="TextBox_TextChanged" Margin="20, 20, 20, 20" FontSize="25" Grid.Row="0"/>
+        <ListView
+                Name="Livros"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                ScrollViewer.HorizontalScrollMode="Enabled"
+                ScrollViewer.VerticalScrollMode="Disabled"
+                ScrollViewer.ZoomMode="Disabled"
+                Grid.Row="1" SelectionChanged="Livros_SelectionChanged">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Height="600" Orientation="Vertical">
+                        <Image Stretch="Fill" Height="480" Width="340" Source="{Binding CaminhoImagem}"></Image>
+                        <TextBlock TextWrapping="Wrap" Style="{StaticResource SubheaderTextBlockStyle}" Text="{Binding Nome}" Width="340" />
+                        <TextBlock TextWrapping="Wrap" Style="{StaticResource SubtitleTextBlockStyle}" Text="{Binding Categoria.Nome}" Width="340"  />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>
