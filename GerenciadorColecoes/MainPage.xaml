@@ -51,7 +51,7 @@
         </CommandBar>
     </Page.TopAppBar>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <SplitView DisplayMode="CompactInline" Name="Menu" IsPaneOpen="True" 
+        <SplitView DisplayMode="Inline" Name="Menu" IsPaneOpen="True" 
               CompactPaneLength="50" OpenPaneLength="250">
             <SplitView.Pane>
                 <StackPanel Background="LightGray">

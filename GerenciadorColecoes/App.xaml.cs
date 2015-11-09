@@ -47,8 +47,9 @@ namespace GerenciadorColecoes
                     db.SaveChanges();
                 }
 
-                db.Livros.RemoveRange(db.Livros);
-                db.SaveChanges();
+                //db.Livros.RemoveRange(db.Livros);
+                //db.SaveChanges();
+
                 if(db.Livros.Count() == 0)
                 {
                     for(int i = 0; i < 10; i++) {

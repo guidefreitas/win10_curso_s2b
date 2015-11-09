@@ -32,7 +32,6 @@ namespace GerenciadorColecoes
         {
             this.InitializeComponent();
             this.Loaded += Pesquisar_Loaded;
-            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             Livros.ItemsSource = db.Livros.OrderBy(m => m.UltimoAcesso).Take(10).ToList();
         }
 

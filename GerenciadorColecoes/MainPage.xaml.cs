@@ -34,7 +34,6 @@ namespace GerenciadorColecoes
         {
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
-            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             navigationHelper = new NavigationHelper(this);
         }
 
@@ -44,9 +43,11 @@ namespace GerenciadorColecoes
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            this.Categorias.ItemsSource = ger.BuscarCategorias().ToList();
+            this.CarregaCategorias();
             this.CarregaFavoritos();
         }
+
+
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -56,6 +57,11 @@ namespace GerenciadorColecoes
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedFrom(e);
+        }
+
+        private void CarregaCategorias()
+        {
+            this.Categorias.ItemsSource = ger.BuscarCategorias().ToList();
         }
 
         private void CarregaFavoritos()
