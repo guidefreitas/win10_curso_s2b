@@ -1,4 +1,5 @@
-﻿using GerenciadorColecoes.Models;
+﻿using AdventureWorks.Common;
+using GerenciadorColecoes.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,21 +27,35 @@ namespace GerenciadorColecoes
     public sealed partial class MainPage : Page
     {
 
-        GerenciadorContext db = new GerenciadorContext();
-
+        IGerenciador ger = new Gerenciador();
+        private NavigationHelper navigationHelper;
 
         public MainPage()
         {
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
-            
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
+            navigationHelper = new NavigationHelper(this);
         }
+
+
+
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            this.Categorias.ItemsSource = db.Categorias.ToList();
+            this.Categorias.ItemsSource = ger.BuscarCategorias().ToList();
             this.CarregaFavoritos();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            navigationHelper.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            navigationHelper.OnNavigatedFrom(e);
         }
 
         private void CarregaFavoritos()
@@ -49,7 +64,7 @@ namespace GerenciadorColecoes
             TituloPagina.Text = "Favoritos";
 
             //Busca todos os livros ordenando pela data de último acesso
-            this.Livros.ItemsSource = db.Livros
+            this.Livros.ItemsSource = ger.BuscarLivros()
                                         .Where(m => m.Favorito == true)
                                         .OrderByDescending(m => m.UltimoAcesso)
                                         .ToList();
@@ -58,19 +73,22 @@ namespace GerenciadorColecoes
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             //Navega para a página Pesquisar
-            this.Frame.Navigate(typeof(Pesquisar), null);
+            //this.Frame.Navigate(typeof(Pesquisar), null);
+            App.NavigationService.Navigate<Pesquisar>(null);
         }
 
         private void AppBarButton_Click_1(object sender, RoutedEventArgs e)
         {
             //Navega para a página EditarLivro 
-            this.Frame.Navigate(typeof(EditarLivro), null);
+            //this.Frame.Navigate(typeof(EditarLivro), null);
+            App.NavigationService.Navigate<EditarLivro>(null);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             //Navega para a página EditarCategoria
-            this.Frame.Navigate(typeof(EditarCategoria), null);
+            //this.Frame.Navigate(typeof(EditarCategoria), null);
+            App.NavigationService.Navigate<EditarCategoria>(null);
         }
 
         private void Categorias_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -94,7 +112,7 @@ namespace GerenciadorColecoes
             {
                 //Busca no banco de dados todos os livros que tenham uma categoria com o id
                 //igual ao id da categoria selecionada
-                this.Livros.ItemsSource = db.Livros
+                this.Livros.ItemsSource = ger.BuscarLivros()
                                         .Where(m => m.Categoria.Id == categoria.Id)
                                         .OrderBy(m => m.Nome)
                                         .ToList();
@@ -110,9 +128,11 @@ namespace GerenciadorColecoes
             //Pega o livro selecionado na lista de livros
             Livro livro = Livros.SelectedItem as Livro;
 
-            //Navega para a página de Detalhe do livro passando o Id do livro selecionado
-            this.Frame.Navigate(typeof(DetalheLivro), livro.Id);
-            
+            if(livro != null)
+            {
+                //Navega para a página de Detalhe do livro passando o Id do livro selecionado
+                this.Frame.Navigate(typeof(DetalheLivro), livro.Id);
+            }
         }
 
         private void AppBarButton_Click_2(object sender, RoutedEventArgs e)
@@ -125,7 +145,14 @@ namespace GerenciadorColecoes
         private void btEditCategoria_Click(object sender, RoutedEventArgs e)
         {
             Categoria categoriaSelecionada = Categorias.SelectedItem as Categoria;
-            this.Frame.Navigate(typeof(EditarCategoria), categoriaSelecionada.Id);
+            //this.Frame.Navigate(typeof(EditarCategoria), categoriaSelecionada.Id);
+            App.NavigationService.Navigate<EditarCategoria>(categoriaSelecionada.Id);
+
+        }
+
+        private void HamburgerButton_Click(object sender, RoutedEventArgs e)
+        {
+            Menu.IsPaneOpen = !Menu.IsPaneOpen;
         }
     }
 }

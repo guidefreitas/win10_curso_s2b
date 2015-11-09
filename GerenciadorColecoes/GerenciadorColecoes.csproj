@@ -17,7 +17,10 @@
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>GerenciadorColecoes_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>GerenciadorColecoes_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>2C43A72DAD148A2D5F072E2906E9BE751FDD536A</PackageCertificateThumbprint>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -90,13 +93,20 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="GerenciadorColecoes_StoreKey.pfx" />
     <None Include="project.json" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\DateTimeOffsetConverter.cs" />
+    <Compile Include="Common\INavigationService.cs" />
+    <Compile Include="Common\NavigationHelper.cs" />
+    <Compile Include="Common\NavigationService.cs" />
+    <Compile Include="Common\RelayCommand.cs" />
+    <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Common\VisibilityConverter.cs" />
     <Compile Include="DetalheLivro.xaml.cs">
       <DependentUpon>DetalheLivro.xaml</DependentUpon>
     </Compile>
@@ -120,6 +130,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ViewState.cs" />
     <Compile Include="Pesquisar.xaml.cs">
       <DependentUpon>Pesquisar.xaml</DependentUpon>
     </Compile>
@@ -135,6 +146,7 @@
     <Content Include="Assets\blank_cover.jpg" />
     <Content Include="Assets\livro_1_cover.jpg" />
     <Content Include="Assets\livro_2_cover.jpg" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

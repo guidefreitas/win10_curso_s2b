@@ -1,4 +1,5 @@
-﻿using GerenciadorColecoes.Models;
+﻿using AdventureWorks.Common;
+using GerenciadorColecoes.Models;
 using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
@@ -29,20 +30,24 @@ namespace GerenciadorColecoes
     {
 
         Livro livro = new Livro();
-        GerenciadorContext db = new GerenciadorContext();
+        IGerenciador ger = new Gerenciador();
+        private NavigationHelper navigationHelper;
 
         public DetalheLivro()
         {
             this.InitializeComponent();
             this.Loaded += DetalheLivro_Loaded;
+            navigationHelper = new NavigationHelper(this);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            navigationHelper.OnNavigatedTo(e);
+
             if (e.Parameter != null)
             {
                 Int64 livroId = (Int64)e.Parameter;
-                livro = db.Livros
+                livro = ger.BuscarLivros()
                           .Where(m => m.Id == livroId)
                           .Include(a =>a.Categoria)
                           .FirstOrDefault();
@@ -65,7 +70,7 @@ namespace GerenciadorColecoes
 
                     livro.UltimoAcesso = DateTime.Now;
                     btFavorito.IsChecked = livro.Favorito;
-                    db.SaveChanges();
+                    ger.AtualizarLivro(livro);
                 }
 
             }
@@ -77,7 +82,8 @@ namespace GerenciadorColecoes
             {
                 if (this.Frame.CanGoBack)
                 {
-                    this.Frame.GoBack();
+                    //this.Frame.GoBack();
+                    App.NavigationService.GoBack();
                 }
             };
 
@@ -119,30 +125,30 @@ namespace GerenciadorColecoes
 
         private void OkBtnClick(IUICommand command)
         {
-            Livro livroDb = db.Livros.Where(m => m.Id == livro.Id).FirstOrDefault();
+            Livro livroDb = ger.BuscarLivros().Where(m => m.Id == livro.Id).FirstOrDefault();
             if (livroDb != null)
             {
-                db.Livros.Remove(livroDb);
-                db.SaveChanges();
+                ger.RemoverLivro(livroDb.Id);
                 if (this.Frame.CanGoBack)
                 {
-                    this.Frame.GoBack();
+                    //this.Frame.GoBack();
+                    App.NavigationService.GoBack();
                 }
             }
         }
 
-        private async void btFavorito_Checked(object sender, RoutedEventArgs e)
+        private void btFavorito_Checked(object sender, RoutedEventArgs e)
         {
-            Livro livroDb = db.Livros.Where(m => m.Id == livro.Id).FirstOrDefault();
-            livro.Favorito = true;
-            await db.SaveChangesAsync();
+            Livro livroDb = ger.BuscarLivros().Where(m => m.Id == livro.Id).FirstOrDefault();
+            livroDb.Favorito = true;
+            ger.AtualizarLivro(livroDb);
         }
 
-        private async void btFavorito_Unchecked(object sender, RoutedEventArgs e)
+        private void btFavorito_Unchecked(object sender, RoutedEventArgs e)
         {
-            Livro livroDb = db.Livros.Where(m => m.Id == livro.Id).FirstOrDefault();
+            Livro livroDb = ger.BuscarLivros().Where(m => m.Id == livro.Id).FirstOrDefault();
             livro.Favorito = false;
-            await db.SaveChangesAsync();
+            ger.AtualizarLivro(livroDb);
         }
     }
 }

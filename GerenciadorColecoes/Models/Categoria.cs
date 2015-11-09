@@ -8,6 +8,11 @@ namespace GerenciadorColecoes.Models
 {
     public class Categoria
     {
+        public Categoria()
+        {
+            this.Livros = new List<Livro>();
+        }
+
         public long Id { get; set; }
 
         public String Nome { get; set; }

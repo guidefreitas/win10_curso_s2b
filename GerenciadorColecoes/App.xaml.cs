@@ -1,4 +1,5 @@
-﻿using GerenciadorColecoes.Models;
+﻿using AdventureWorks.Common;
+using GerenciadorColecoes.Models;
 using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Search;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -33,7 +35,7 @@ namespace GerenciadorColecoes
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            using(var db = new GerenciadorContext())
+            using (var db = new GerenciadorContext())
             {
                 db.Database.Migrate();
 
@@ -45,16 +47,18 @@ namespace GerenciadorColecoes
                     db.SaveChanges();
                 }
 
+                db.Livros.RemoveRange(db.Livros);
+                db.SaveChanges();
                 if(db.Livros.Count() == 0)
                 {
                     for(int i = 0; i < 10; i++) {
                         Livro livro = new Livro();
                         livro.Nome = "Livro " + i;
                         livro.Descricao = "Teste";
-                        livro.Favorito = false;
+                        livro.Favorito = true;
                         livro.UltimoAcesso = DateTime.Now;
                         livro.Categoria = db.Categorias.FirstOrDefault();
-                        livro.CaminhoImagem = "ms-appx:///Assets/blank_cover.jpg";
+                        livro.CaminhoImagem = "ms-appx:///Assets/livro_1_cover.jpg";
 
                         db.Livros.Add(livro);
                         db.SaveChanges();
@@ -62,6 +66,36 @@ namespace GerenciadorColecoes
                 }
             }
         }
+
+/*
+#if WINDOWS_APP
+            SearchPane searchPane = SearchPane.GetForCurrentView();
+            searchPane.SuggestionsRequested += SearchPane_SuggestionsRequested;
+#endif
+#if WINDOWS_APP
+        private void SearchPane_SuggestionsRequested(SearchPane sender, SearchPaneSuggestionsRequestedEventArgs args)
+        {
+            args.Request.SearchSuggestionCollection.AppendQuerySuggestion("livroteste");
+        }
+#endif
+*/
+        private void App_BackRequested(object sender, Windows.UI.Core.BackRequestedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null)
+                return;
+
+            // Navigate back if possible, and if the event has not 
+            // already been handled .
+            if (rootFrame.CanGoBack && e.Handled == false)
+            {
+                e.Handled = true;
+                rootFrame.GoBack();
+            }
+        }
+
+
+        public static NavigationService NavigationService { get; private set; }
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -77,6 +111,8 @@ namespace GerenciadorColecoes
                 this.DebugSettings.EnableFrameRateCounter = false;
             }
 #endif
+            //Configura para o aplicativo responder aos comandos de voltar da barra de tarefas e hardware
+            Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
 
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -86,7 +122,7 @@ namespace GerenciadorColecoes
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-
+                App.NavigationService = new NavigationService(rootFrame);
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
@@ -132,5 +168,12 @@ namespace GerenciadorColecoes
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }
+
+        protected override void OnSearchActivated(SearchActivatedEventArgs args)
+        {
+            base.OnSearchActivated(args);
+        }
+
+        
     }
 }

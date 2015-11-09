@@ -32,68 +32,82 @@
     </Page.Resources>
     <Page.TopAppBar>
 
-        <CommandBar IsSticky="True" x:Name="appBar" Background="{StaticResource BackgroundColor}">
+        <CommandBar IsSticky="True" x:Name="appBar" Background="{StaticResource BackgroundColor}" BorderBrush="Transparent">
+
             <CommandBar.PrimaryCommands>
-                
+                <AppBarButton Foreground="{StaticResource ForegroundColor}" Click="HamburgerButton_Click" Icon="Bookmarks" IsCompact="False" Label="Menu"/>
                 <AppBarButton Foreground="{StaticResource ForegroundColor}" Click="AppBarButton_Click_2" Icon="Home" IsCompact="False" Label="Home"/>
                 <AppBarButton Foreground="{StaticResource ForegroundColor}" Visibility="Collapsed" Name="btEditCategoria" Click="btEditCategoria_Click" Icon="Edit" IsCompact="False" Label="Editar"/>
                 <AppBarButton Foreground="{StaticResource ForegroundColor}" Click="AppBarButton_Click" Icon="Find" IsCompact="False" Label="Pesquisar"/>
-                <AppBarButton Foreground="{StaticResource ForegroundColor}" Click="AppBarButton_Click_1" Icon="Add" IsCompact="False" Label="Adicionar Livro"/>
+                <AppBarButton Foreground="{StaticResource ForegroundColor}"  Icon="Add" IsCompact="False" Label="Adicionar">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Adicionar Livro" Click="AppBarButton_Click_1" />
+                            <MenuFlyoutItem Text="Adicionar Categoria" Click="Button_Click" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.TopAppBar>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <StackPanel Grid.Column="0">
-            <StackPanel Orientation="Horizontal" Margin="10,10,10,10" >
-                <TextBlock Text="Categorias" Style="{StaticResource TitleTextBlockStyle}" />
-                <Button Click="Button_Click" Margin="20,0,0,0" HorizontalAlignment="Left" FontSize="22" Width="40" Height="40">+</Button>
-            </StackPanel>
-            <ListView Name="Categorias" 
+        <SplitView DisplayMode="CompactInline" Name="Menu" IsPaneOpen="True" 
+              CompactPaneLength="50" OpenPaneLength="250">
+            <SplitView.Pane>
+                <StackPanel Background="LightGray">
+                    <ListView Name="Categorias" 
                       SelectionChanged="Categorias_SelectionChanged">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock FontSize="20" Text="{Binding Nome}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </StackPanel>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock Name="TituloPagina" Text="Favoritos" Margin="20, 20, 20, 20" Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="0"/>
-            <ListView
-                Name="Livros"
-                ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                ScrollViewer.VerticalScrollBarVisibility="Visible"
-                ScrollViewer.HorizontalScrollMode="Enabled"
-                ScrollViewer.VerticalScrollMode="Enabled"
-                ScrollViewer.ZoomMode="Enabled"
-                SelectionChanged="Livros_SelectionChanged"
-                Grid.Row="1" ItemContainerStyle="{StaticResource ListViewItemStyle1}" >
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <!--<StackPanel Orientation="Horizontal"/>-->
-                        <ItemsWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="4" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Height="600" Orientation="Vertical" Margin="10">
-                            <Image Stretch="Fill" Height="480" Width="340" Source="{Binding CaminhoImagem}"></Image>
-                            <TextBlock Width="300" TextWrapping="WrapWholeWords" Style="{StaticResource SubheaderTextBlockStyle}" Text="{Binding Nome}" />
-                            <TextBlock Width="300" TextWrapping="WrapWholeWords" Style="{StaticResource SubtitleTextBlockStyle}" Text="{Binding Categoria.Nome}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <!--<Button FontFamily="Segoe MDL2 Assets" Content="&#xE0AB;"
+                                            Width="50" Height="50" Background="Transparent"/>-->
+                                    <TextBlock FontSize="20" Text="{Binding Nome}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    
+                </StackPanel>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Name="TituloPagina" Text="Favoritos" Margin="20, 20, 20, 20" Style="{StaticResource HeaderTextBlockStyle}" Grid.Row="0"/>
+                    <ListView
+                        Name="Livros"
+                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                        ScrollViewer.VerticalScrollBarVisibility="Visible"
+                        ScrollViewer.HorizontalScrollMode="Enabled"
+                        ScrollViewer.VerticalScrollMode="Enabled"
+                        ScrollViewer.ZoomMode="Enabled"
+                        SelectionChanged="Livros_SelectionChanged"
+                        Grid.Row="1" ItemContainerStyle="{StaticResource ListViewItemStyle1}" > 
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <!--<StackPanel Orientation="Horizontal"/>-->
+                                <ItemsWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="4" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Height="600" Orientation="Vertical" Margin="10">
+                                    <Image Stretch="Fill" Height="480" Width="340" Source="{Binding CaminhoImagem}"></Image>
+                                    <TextBlock Width="300" TextWrapping="WrapWholeWords" Style="{StaticResource SubheaderTextBlockStyle}" Text="{Binding Nome}" />
+                                    <TextBlock Width="300" TextWrapping="WrapWholeWords" Style="{StaticResource SubtitleTextBlockStyle}" Text="{Binding Categoria.Nome}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
+
+        
+        
 
     </Grid>
 </Page>

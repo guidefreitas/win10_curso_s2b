@@ -1,4 +1,5 @@
-﻿using GerenciadorColecoes.Models;
+﻿using AdventureWorks.Common;
+using GerenciadorColecoes.Models;
 using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
@@ -27,22 +28,32 @@ namespace GerenciadorColecoes
     public sealed partial class EditarCategoria : Page
     {
         Categoria categoria = null;
-        GerenciadorContext db = new GerenciadorContext();
+        IGerenciador ger = new Gerenciador();
+        private NavigationHelper navigationHelper;
+
         public EditarCategoria()
         {
             this.InitializeComponent();
             this.Loaded += EditarCategoria_Loaded;
+            navigationHelper = new NavigationHelper(this);
             categoria = new Categoria();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if(e.Parameter != null)
+            navigationHelper.OnNavigatedTo(e);
+
+            if (e.Parameter != null)
             {
                 Int64 categoriaId = (Int64) e.Parameter;
-                categoria = db.Categorias.Where(m => m.Id == categoriaId).FirstOrDefault();
+                categoria = ger.BuscarCategorias().Where(m => m.Id == categoriaId).FirstOrDefault();
                 tbNome.Text = categoria.Nome;
             }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            navigationHelper.OnNavigatedFrom(e);
         }
 
         private void EditarCategoria_Loaded(object sender, RoutedEventArgs e)
@@ -51,7 +62,8 @@ namespace GerenciadorColecoes
             {
                 if (this.Frame.CanGoBack)
                 {
-                    this.Frame.GoBack();
+                    //this.Frame.GoBack();
+                    App.NavigationService.GoBack();
                 }
             };
 
@@ -79,18 +91,17 @@ namespace GerenciadorColecoes
 
             if (categoria.Id == 0)
             {
-                db.Categorias.Add(categoria);
-                db.SaveChanges();
+                ger.AdicionarCategoria(categoria);
             }
             else
             {
-                db.Categorias.Update(categoria);
-                db.SaveChanges();
+                ger.AtualizarCategoria(categoria);
             }
 
             if (this.Frame.CanGoBack)
             {
-                this.Frame.GoBack();
+                //this.Frame.GoBack();
+                App.NavigationService.GoBack();
             }
             
 
@@ -98,26 +109,34 @@ namespace GerenciadorColecoes
 
         private void btApagar_Click(object sender, RoutedEventArgs e)
         {
-            Categoria categoriaDb = db.Categorias.Where(m => m.Id == categoria.Id).Include(m => m.Livros).FirstOrDefault();
-            foreach(Livro livro in categoriaDb.Livros)
+            Categoria categoriaDb = ger.BuscarCategorias().Where(m => m.Id == categoria.Id).Include(m => m.Livros).FirstOrDefault();
+            if(categoriaDb.Livros != null && categoriaDb.Livros.Count > 0)
             {
-                Categoria categoriaNaoClassificados = db.Categorias.Where(m => m.Nome == "Não classificados").FirstOrDefault();
-                if(categoriaNaoClassificados == null)
+                foreach (Livro livro in categoriaDb.Livros.ToList())
                 {
-                    categoriaNaoClassificados = new Categoria();
-                    categoriaNaoClassificados.Nome = "Não classificados";
-                    db.Categorias.Add(categoriaNaoClassificados);
-                    db.SaveChanges();
-                }
+                    Categoria categoriaNaoClassificados = ger.BuscarCategorias().Where(m => m.Nome == "Não classificados").FirstOrDefault();
+                    if (categoriaNaoClassificados == null)
+                    {
+                        categoriaNaoClassificados = new Categoria();
+                        categoriaNaoClassificados.Nome = "Não classificados";
+                        ger.AdicionarCategoria(categoriaNaoClassificados);
+                    }
 
-                livro.Categoria = categoriaNaoClassificados;
-                db.SaveChanges();
+                    categoriaNaoClassificados.Livros.Add(livro);
+                    ger.AtualizarCategoria(categoriaNaoClassificados);
+                }
             }
+            
 
             if(categoriaDb.Livros.Count == 0)
             {
-                db.Categorias.Remove(categoriaDb);
-                db.SaveChanges();
+                ger.RemoverCategoria(categoriaDb.Id);
+            }
+
+            if (this.Frame.CanGoBack)
+            {
+                //this.Frame.GoBack();
+                App.NavigationService.GoBack();
             }
         }
     }

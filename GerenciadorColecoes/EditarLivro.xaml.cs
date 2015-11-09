@@ -1,4 +1,5 @@
-﻿using GerenciadorColecoes.Models;
+﻿using AdventureWorks.Common;
+using GerenciadorColecoes.Models;
 using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
@@ -32,29 +33,38 @@ namespace GerenciadorColecoes
     /// </summary>
     public sealed partial class EditarLivro : Page
     {
-        GerenciadorContext db = new GerenciadorContext();
+        private NavigationHelper navigationHelper;
+        IGerenciador ger = new Gerenciador();
         Livro livro = null;
 
         public EditarLivro()
         {
             this.InitializeComponent();
             this.Loaded += EditarLivro_Loaded;
+            navigationHelper = new NavigationHelper(this);
             livro = new Livro();
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            navigationHelper.OnNavigatedFrom(e);
+        }
+
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            cbCategorias.ItemsSource = db.Categorias.ToList();
+            navigationHelper.OnNavigatedTo(e);
+
+            cbCategorias.ItemsSource = ger.BuscarCategorias().ToList();
 
             if (e.Parameter != null)
             {
                 Int64 livroId = (Int64)e.Parameter;
-                livro = db.Livros.Where(m => m.Id == livroId)
+                livro = ger.BuscarLivros().Where(m => m.Id == livroId)
                                  .Include(m => m.Categoria)
                                  .FirstOrDefault();
                 tbNome.Text = livro.Nome;
                 tbDescricao.Text = livro.Descricao;
-                tbImagem.Text = livro.CaminhoImagem;
                 ImagemCapa.Source = new BitmapImage(new Uri(livro.CaminhoImagem, UriKind.Absolute));
                 foreach (Categoria c in cbCategorias.Items)
                 {
@@ -72,7 +82,8 @@ namespace GerenciadorColecoes
             {
                 if (this.Frame.CanGoBack)
                 {
-                    this.Frame.GoBack();
+                    //this.Frame.GoBack();
+                    App.NavigationService.GoBack();
                 }
             };
 
@@ -91,10 +102,9 @@ namespace GerenciadorColecoes
         private async void btSalvar_Click(object sender, RoutedEventArgs e)
         {
             String nomeLivro = tbNome.Text;
-            String caminhoImagem = tbImagem.Text;
             Categoria categoria = cbCategorias.SelectedItem as Categoria;
             String descricaoLivro = tbDescricao.Text;
-
+            String caminhoImagem = (ImagemCapa.Source as BitmapImage).UriSource.AbsoluteUri;
             if(String.IsNullOrEmpty(nomeLivro))
             {
                 await new MessageDialog("Informe o nome").ShowAsync();
@@ -114,18 +124,17 @@ namespace GerenciadorColecoes
             
             if(livro.Id == 0)
             {
-                db.Livros.Add(livro);
+                ger.AdicionarLivro(livro);
             }
             else
             {
-                db.Livros.Update(livro);
+                ger.AtualizarLivro(livro);
             }
             
-            db.SaveChanges();
-
             if (this.Frame.CanGoBack)
             {
-                this.Frame.GoBack();
+                //this.Frame.GoBack();
+                App.NavigationService.GoBack();
             }
 
         }
@@ -143,17 +152,6 @@ namespace GerenciadorColecoes
             await targetStream.AsStreamForWrite().WriteAsync(data, 0, data.Length);
             await targetStream.FlushAsync();
             return file;
-        }
-
-        private async void tbImagem_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if(e.Key == Windows.System.VirtualKey.Enter)
-            {
-                String url = tbImagem.Text;
-                StorageFile file = await this.DownloadImage(url);
-                tbImagem.Text = file.Path;
-                ImagemCapa.Source = new BitmapImage(new Uri(file.Path, UriKind.Absolute));
-            }
         }
 
         private async void tbImagemUrl_Click(object sender, RoutedEventArgs e)
@@ -199,7 +197,6 @@ namespace GerenciadorColecoes
                 if (!String.IsNullOrEmpty(urlDownload))
                 {
                     StorageFile file = await this.DownloadImage(urlDownload);
-                    tbImagem.Text = file.Path;
                     ImagemCapa.Source = new BitmapImage(new Uri(file.Path, UriKind.Absolute));
                 }
             }
@@ -224,7 +221,6 @@ namespace GerenciadorColecoes
 
             if (file != null)
             {
-                tbImagem.Text = newFile.Path;
                 ImagemCapa.Source = new BitmapImage(new Uri(newFile.Path, UriKind.Absolute));
             }
         }
@@ -239,7 +235,6 @@ namespace GerenciadorColecoes
             StorageFile file = await dialog.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (file != null)
             {
-                tbImagem.Text = file.Path;
                 ImagemCapa.Source = new BitmapImage(new Uri(file.Path, UriKind.Absolute));
             }
         }

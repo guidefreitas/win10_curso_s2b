@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="ebad92bc-88a2-4572-8bd4-e74272ebfee3" Publisher="CN=Guilherme" Version="1.0.0.0" />
+  <Identity Name="10435GuilhermeDefreitasJu.micjoinville.colecoes" Publisher="CN=7221E8C0-4307-47AE-883C-A1BC8844ED51" Version="1.1.1.0" />
   <mp:PhoneIdentity PhoneProductId="ebad92bc-88a2-4572-8bd4-e74272ebfee3" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>GerenciadorColecoes</DisplayName>
-    <PublisherDisplayName>Guilherme</PublisherDisplayName>
+    <DisplayName>micjoinville.colecoes</DisplayName>
+    <PublisherDisplayName>Guilherme Defreitas Juraszek</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

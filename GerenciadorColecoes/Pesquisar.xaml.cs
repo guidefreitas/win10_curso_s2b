@@ -32,6 +32,7 @@ namespace GerenciadorColecoes
         {
             this.InitializeComponent();
             this.Loaded += Pesquisar_Loaded;
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             Livros.ItemsSource = db.Livros.OrderBy(m => m.UltimoAcesso).Take(10).ToList();
         }
 
@@ -67,7 +68,11 @@ namespace GerenciadorColecoes
         private void Livros_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Livro livro = Livros.SelectedItem as Livro;
-            this.Frame.Navigate(typeof(DetalheLivro), livro.Id);
+            if(livro != null)
+            {
+                this.Frame.Navigate(typeof(DetalheLivro), livro.Id);
+            }
+            
         }
     }
 }
